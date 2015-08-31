@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
+import java.awt.FontMetrics;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
