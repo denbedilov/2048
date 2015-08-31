@@ -2,19 +2,19 @@ package gamesEx2;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Random;
-import java.awt.FontMetrics;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel
 {
-	private final int boardSize=4;
+	private final int boardSize=6;
 	private final int squareSize=80;
 	private final int space=10;
 	private Logic logic;
@@ -24,7 +24,7 @@ public class GamePanel extends JPanel
 	{
 		initializeBoard();
 		setFocusable(true);
-        requestFocus();
+		requestFocus();
 		addKeyListener(new KeyListener()
 		{
 			@Override
@@ -36,15 +36,15 @@ public class GamePanel extends JPanel
 			public void keyReleased(KeyEvent e)
 			{
 				int key = e.getKeyCode();
-			    switch( key ) 
-			    {
-			        case KeyEvent.VK_UP:	 logic.moveUp();		break;
-			        case KeyEvent.VK_DOWN:	 logic.moveDown();		break;
-			        case KeyEvent.VK_LEFT:	 logic.moveLeft();		break;
-			        case KeyEvent.VK_RIGHT:  logic.moveRight();		break;
-			        default:										break;
-			    }
-			    logic.addNewNum();
+				switch( key ) 
+				{
+				case KeyEvent.VK_UP:	 logic.moveUp();		break;
+				case KeyEvent.VK_DOWN:	 logic.moveDown();		break;
+				case KeyEvent.VK_LEFT:	 logic.moveLeft();		break;
+				case KeyEvent.VK_RIGHT:  logic.moveRight();		break;
+				default:										break;
+				}
+				logic.addNewNum();
 				repaint();
 			}
 
@@ -60,10 +60,11 @@ public class GamePanel extends JPanel
 		Graphics2D g2d = (Graphics2D) g;
 		drawBoard(g2d);
 	}
-	
+
 	public void initializeBoard()
 	{
 		Random rand = new Random();
+		logic=new Logic(boardSize);
 		int[][] board=logic.getBoard();
 		//random square
 		int rect1Row = (rand.nextInt(boardSize) + 1)-1;
@@ -88,10 +89,10 @@ public class GamePanel extends JPanel
 		board[rect2Row][rect2Col]=rNum2;
 		logic.setBoard(board);
 	}
-	
+
 	public void drawBoard(Graphics2D g2d)
 	{
-	Color c = new Color(179, 170, 127);
+		Color c = new Color(179, 170, 127);
 		g2d.setColor(c);
 		g2d.fillRect(80, 80, (squareSize*boardSize)+(space*(boardSize+1)),(squareSize*boardSize)+(space*(boardSize+1)));    
 		int x=squareSize+space;
@@ -108,10 +109,13 @@ public class GamePanel extends JPanel
 				g2d.fillRect(x,y,squareSize,squareSize);
 				g2d.setColor(Color.BLACK);
 				g2d.setFont(new Font("TimesRoman", Font.PLAIN, 30)); 
-				FontMetrics fm = g2d.getFontMetrics();
-				stringX=x+((squareSize+space)/2)-fm.stringWidth(String.valueOf(board[i][j]));
-				stringY=y+((squareSize+space))-fm.getHeight();
-				g2d.drawString(String.valueOf(board[i][j]),stringX ,stringY );
+				if(board[i][j]!=0)
+				{
+					FontMetrics fm = g2d.getFontMetrics();
+					stringX=x+((squareSize+space-fm.stringWidth(String.valueOf(board[i][j])))/2);
+					stringY=y+((squareSize+space))-fm.getHeight();
+					g2d.drawString(String.valueOf(board[i][j]),stringX ,stringY );
+				}
 				x+=squareSize+space;
 				g2d.setColor(Color.gray);
 			}
@@ -125,9 +129,9 @@ public class GamePanel extends JPanel
 		switch(i)
 		{
 		case 2:
-			return new Color(10, 50, 50, 80);
-		case 4:
 			return new Color(189, 189, 163, 80);
+		case 4:
+			return new Color(10, 50, 50, 80);
 		case 8:
 			return new Color(255, 171, 0, 80);
 		case 16:
@@ -147,10 +151,10 @@ public class GamePanel extends JPanel
 		case 2048:
 			return new Color(0, 255, 171, 80);
 		default:
-			return Color.gray;
+			return new Color(228, 219, 178, 240);
 		}
 	}
-	
+
 	public Logic getLogic()
 	{
 		return logic;
