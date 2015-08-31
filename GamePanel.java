@@ -13,10 +13,11 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel
 {
-	public static final int WIDTH = 500, HEIGHT = 500;
-	private final int boardSize=2;
-	private final int squareSize=120;
-	private Logic logic = new Logic(boardSize);
+	private final int boardSize=4;
+	private final int squareSize=80;
+	private final int space=10;
+	private Logic logic;
+	private int stringX,stringY;
 
 	public GamePanel()
 	{
@@ -89,29 +90,32 @@ public class GamePanel extends JPanel
 	
 	public void drawBoard(Graphics2D g2d)
 	{
-		g2d.setColor(Color.DARK_GRAY);
-		g2d.fillRect(100, 100, WIDTH,HEIGHT);    
-		int x=squareSize;
-		int y=squareSize;
+	Color c = new Color(179, 170, 127);
+		g2d.setColor(c);
+		g2d.fillRect(80, 80, (squareSize*boardSize)+(space*(boardSize+1)),(squareSize*boardSize)+(space*(boardSize+1)));    
+		int x=squareSize+space;
+		int y=squareSize+space;
 		int[][] board=logic.getBoard();
-		g2d.setColor(Color.GRAY);
+		Color c2 = new Color(228, 219, 178, 240);
+		g2d.setColor(c2);
 		for(int i=0; i<boardSize ; i++)
 		{
 			for(int j=0; j<boardSize; j++)
 			{
+
 				g2d.setColor(chooseColor(board[i][j]));
-				g2d.fillRect(x,y,100,100);
+				g2d.fillRect(x,y,squareSize,squareSize);
 				g2d.setColor(Color.BLACK);
 				g2d.setFont(new Font("TimesRoman", Font.PLAIN, 30)); 
-				if(board[i][j] != 0)
-				{
-					g2d.drawString(String.valueOf(board[i][j]), x+45, y+60);
-				}
-				x+=squareSize;
+				FontMetrics fm = g2d.getFontMetrics();
+				stringX=x+((squareSize+space)/2)-fm.stringWidth(String.valueOf(board[i][j]));
+				stringY=y+((squareSize+space))-fm.getHeight();
+				g2d.drawString(String.valueOf(board[i][j]),stringX ,stringY );
+				x+=squareSize+space;
 				g2d.setColor(Color.gray);
 			}
-			x=squareSize;
-			y+=squareSize;
+			x=squareSize+space;
+			y+=squareSize+space;
 		}
 	}
 
