@@ -5,9 +5,15 @@ import java.util.Random;
 public class Logic {
 	private int[][] board;
 	private boolean moved; 
-
+	private boolean win;
+	private boolean gameOver;
+	
+	final int winsum = 1024;
+	
 	public Logic(int boardSize)
 	{
+		win = false;
+		gameOver = false;
 		board=new int[boardSize][boardSize];
 		for(int i=0; i<boardSize; i++)
 			for(int j=0; j<boardSize; j++)
@@ -28,6 +34,15 @@ public class Logic {
 			    board[i][j]=newBoard[i][j];
 	}
 	
+	private boolean isBoardFull()
+	{
+		for(int i=0; i<board.length; i++)
+			  for(int j=0; j<board[i].length; j++)
+			    if(board[i][j] == 0)
+			    	return false;
+		return true;
+	}
+	
 	public void moveLeft()
 	{
 		moved = false;
@@ -41,15 +56,20 @@ public class Logic {
 					  	{
 						  	moved = true;
 						  	board[i][j] = (board[i][j])*2;
+						  	if(board[i][j] == winsum)
+						  		win = true;
 						  	board[i][j+1] = 0;
 						  	shiftLeft(i, j+1);
 						}
 				  }
 			  }
+		if(!moved && isBoardFull())
+			gameOver = true;
 	}
 	
 	public void moveDown()
 	{
+		moved = false;
 		for(int i=board.length-1; i>=0; i--)
 			  for(int j=board.length-1; j>=0; j--)
 			  {
@@ -58,12 +78,17 @@ public class Logic {
 				  {
 					  if(board[i][j] == board[i-1][j])
 					  	{
+						  	moved = true;
 						  	board[i][j] = (board[i][j])*2;
+						  	if(board[i][j] == winsum)
+						  		win = true;
 						  	board[i-1][j] = 0;
 						  	shiftDown(i-1, j);
 						}
 				  }
 			  }
+		if(!moved && isBoardFull())
+			gameOver = true;
 	}
 	
 	public void moveUp()
@@ -77,16 +102,22 @@ public class Logic {
 				  {
 					  if(board[i][j] == board[i+1][j])
 					  	{
+						  	moved = true;
 						  	board[i][j] = (board[i][j])*2;
+						  	if(board[i][j] == winsum)
+						  		win = true;
 						  	board[i+1][j] = 0;
 						  	shiftUp(i+1, j);
 						}
 				  }
 			  }
+		if(!moved && isBoardFull())
+			gameOver = true;
 	}
 	
 	public void moveRight()
 	{
+		moved = false;
 		for(int i=board.length-1; i>=0; i--)
 			  for(int j=board.length-1; j>=0; j--)
 			  {
@@ -95,12 +126,17 @@ public class Logic {
 				  {
 					  if(board[i][j] == board[i][j-1])
 					  	{
+						  	moved = true;
 						  	board[i][j] = (board[i][j])*2;
+						  	if(board[i][j] == winsum)
+						  		win = true;
 						  	board[i][j-1] = 0;
 						  	shiftRight(i, j-1);
 						}
 				  }
 			  }
+		if(!moved && isBoardFull())
+			gameOver = true;
 	}
 	
 	private void shiftLeft(int i, int j)
@@ -130,22 +166,23 @@ public class Logic {
 	private void shiftRight(int i, int j)
 	{
 		int start = j;
-		for(int k=board.length-j; k>0; k--)
+		for(int k=board.length-1; k>0; k--)
 		{
 			if(board[i][j] == 0)
 			{
 				while(j-1 >= 0)
 				{
+					if(board[i][j-1] != 0)
+						moved = true;
 					board[i][j] = board[i][j-1];
 					j--;
 				}
 				board[i][j] = 0;
 			}
-				if(board[i][start] != 0)
-					j = start-1;
-				else
-					j = start;
-				if(j > 0)
+				while(board[i][start] != 0 && start-1 >= 0)
+					start--;
+				j = start;
+				if(j < 0)
 					break;
 		}
 	}
@@ -177,21 +214,22 @@ public class Logic {
 	private void shiftDown(int i, int j)
 	{
 		int start = i;
-		for(int k=board.length-i; k>0; k--)
+		for(int k=board.length-1; k>0; k--)
 		{
 			if(board[i][j] == 0)
 			{
 				while(i-1 >= 0)
 				{
+					if(board[i-1][j] != 0)
+						moved = true;
 					board[i][j] = board[i-1][j];
 					i--;
 				}
 				board[i][j] = 0;
 			}
-				if(board[start][j] != 0)
-					i = start-1;
-				else
-					i = start;
+				while(board[start][j] != 0 && start-1 >= 0)
+					start--;
+				i = start;
 				if(i < 0)
 					break;
 		}
@@ -210,5 +248,15 @@ public class Logic {
 			}while(board[rnd1][rnd2] != 0);
 			board[rnd1][rnd2] = 2;
 		}
+	}
+	
+	public boolean isWin()
+	{
+		return win;
+	}
+	
+	public boolean isLoose()
+	{
+		return gameOver;
 	}
 }
