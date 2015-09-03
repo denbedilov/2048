@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel
 {
-	private final int boardSize=6;
+	private final int boardSize=4;
 	private final int squareSize=80;
 	private final int space=10;
 	private Logic logic;
@@ -44,7 +44,12 @@ public class GamePanel extends JPanel
 				case KeyEvent.VK_RIGHT:  logic.moveRight();		break;
 				default:										break;
 				}
-				logic.addNewNum();
+				if(logic.isWin())
+					JOptionPane.showMessageDialog(null, "You WIN", "", JOptionPane.INFORMATION_MESSAGE);
+				if(logic.isLoose())
+					JOptionPane.showMessageDialog(null, "You LOOOOOOSEEEER", "", JOptionPane.INFORMATION_MESSAGE);
+				else
+					logic.addNewNum();
 				repaint();
 			}
 
