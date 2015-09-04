@@ -240,13 +240,20 @@ public class Logic {
 		if(moved)
 		{
 			Random rand = new Random();
-			int rnd1, rnd2;
+			int rnd1, rnd2,rnd3;
 			do
 			{
 				rnd1 = (rand.nextInt(board.length) + 1)-1;
 				rnd2 = (rand.nextInt(board.length) + 1)-1;
+				rnd3=rand.nextInt(4) + 1;
+
+				if(rnd3>2)
+					rnd3=4;
+				else
+					rnd3=2;
+
 			}while(board[rnd1][rnd2] != 0);
-			board[rnd1][rnd2] = 2;
+			board[rnd1][rnd2] = rnd3;
 		}
 	}
 	
